@@ -13,7 +13,6 @@ class DataLakeStack(core.Stack):
         self.deploy_env = os.environ["ENVIRONMENT"]
         super().__init__(scope, id=f"{self.deploy_env}-data-lake-stack", **kwargs)
 
-
         self.data_lake_raw_bucket = BaseDataLakeBucket(self, layer=DataLakeLayer.RAW)
 
         self.data_lake_raw_bucket.add_lifecycle_rule(
