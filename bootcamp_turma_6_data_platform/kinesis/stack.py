@@ -80,7 +80,7 @@ class KinesisStack(core.Stack):
             error_output_prefix="bad_records",
             prefix="atomic_events/landing_date=!{timestamp:yyyy}-!{timestamp:MM}-!{timestamp:dd}/",
             buffering_hints=firehose.CfnDeliveryStream.BufferingHintsProperty(
-                interval_in_seconds=60, size_in_m_bs=1
+                interval_in_seconds=90, size_in_m_bs=1
             ),
             role_arn=self.kinesis_role.role_arn,
         )
