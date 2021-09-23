@@ -1,3 +1,7 @@
+import os
+import random
+import time
+
 import psycopg2
 
 dsn = (
@@ -8,9 +12,9 @@ dsn = (
     "host={host} ".format(
         dbname="orders",
         user="postgres",
-        password=",MHCILqBEZ_L5Ev4r1eLMr=W2Ff-5A",
+        password=os.environ['password'],
         port=5432,
-        host="rds-production-orders-db.cjuefeiklqc5.us-east-1.rds.amazonaws.com",
+        host="rds-production-orders-db.cdbhrilkwhra.us-east-1.rds.amazonaws.com",
     )
 )
 
@@ -19,16 +23,16 @@ print("connected")
 conn.set_session(autocommit=True)
 cur = conn.cursor()
 
-# cur.execute(
-#     f"update orders_v2 set value = 500000 where order_id='86a9a8a0-682e-435d-955e-dd61d888412b'"
-# )
-# cur.execute(
-#     f"update orders_v2 set value = 200 where order_id='86a9a8a0-682e-435d-955e-dd61d888412b'"
-# )
-# cur.execute(
-#     f"delete from orders_v2 where order_id='87744bf8-05b4-4e51-807e-5a07960fb450'"
-# )
 
-cur.execute(
-    f"delete from orders_v2 where order_id='65bd991a-73cd-4db3-a92a-64dc96ab6a67'"
-)
+def get_update_query():
+    cur.execute("select order_id from orders order by random() limit 1")
+    order_id = cur.fetchone()[0]
+    rand_value = random.randrange(1, 100000)
+    return f"update orders set value = {rand_value} where order_id='{order_id}'"
+
+
+while True:
+    query = get_update_query()
+    cur.execute(query)
+    print(query)
+    time.sleep(5)

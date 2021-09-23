@@ -165,7 +165,7 @@ class OrdersDMS(dms.CfnReplicationTask):
                         }
                     ]
                 }
-            ),
+            )
         )
 
 
