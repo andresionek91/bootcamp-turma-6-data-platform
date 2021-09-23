@@ -3,6 +3,7 @@ from aws_cdk import core
 from athena.stack import AthenaStack
 from common_stack import CommonStack
 from data_lake.stack import DataLakeStack
+from databricks.stack import DatabricksStack
 from dms.stack import DmsStack
 from glue_catalog.stack import GlueCatalogStack
 from kinesis.stack import KinesisStack
@@ -24,4 +25,5 @@ glue_catalog_stack = GlueCatalogStack(
     raw_data_lake_bucket=data_lake_stack.data_lake_raw_bucket,
     processed_data_lake_bucket=data_lake_stack.data_lake_raw_processed,
 )
+databricks_stack = DatabricksStack(app)
 app.synth()
