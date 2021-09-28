@@ -1,5 +1,6 @@
 from aws_cdk import core
 
+from airflow.stack import AirflowStack
 from athena.stack import AthenaStack
 from common_stack import CommonStack
 from data_lake.stack import DataLakeStack
@@ -26,4 +27,6 @@ glue_catalog_stack = GlueCatalogStack(
     processed_data_lake_bucket=data_lake_stack.data_lake_raw_processed,
 )
 databricks_stack = DatabricksStack(app)
+airflow_stack = AirflowStack(app, common_stack=common_stack, data_lake_raw_bucket=data_lake_stack.data_lake_raw_bucket)
+
 app.synth()

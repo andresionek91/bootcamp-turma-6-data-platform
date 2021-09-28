@@ -1,0 +1,7 @@
+--constraint "https://raw.githubusercontent.com/apache/airflow/constraints-1.10.12/constraints-3.7.txt"
+toolz
+pandas
+requests==2.25.1
+backoff==1.10.0
+ratelimit==2.2.1
+boto3==1.17.31

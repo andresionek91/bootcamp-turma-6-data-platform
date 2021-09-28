@@ -5,6 +5,8 @@ aws_cdk.aws_rds==1.122
 aws_cdk.aws_dms==1.122
 aws_cdk.aws_glue==1.122
 aws_cdk.aws_athena==1.122
+aws_cdk.aws_mwaa==1.122
+aws_cdk.aws_s3_deployment==1.122
 fake_web_events
 boto3
 psycopg2-binary
