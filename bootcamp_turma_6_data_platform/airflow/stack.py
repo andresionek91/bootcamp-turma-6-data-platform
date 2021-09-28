@@ -39,7 +39,7 @@ class AirflowStack(core.Stack):
             mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
                 cloud_watch_log_group_arn=self.log_group.log_group_arn,
                 enabled=True,
-                log_level="WARNING",
+                log_level="INFO",
             )
         )
 
