@@ -198,7 +198,6 @@ class AirflowStack(core.Stack):
         )
 
         self.airflow.node.add_dependency(self.execution_role)
-        self.airflow.node.add_dependency(self.log_group)
         self.airflow.node.add_dependency(self.security_group)
         self.airflow.node.add_dependency(self.bucket)
         self.airflow.node.add_dependency(self.dag_upload)
