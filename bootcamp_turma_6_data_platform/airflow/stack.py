@@ -52,6 +52,11 @@ class AirflowStack(core.Stack):
             id=f"iam-{self.deploy_env}-data-lake-raw-airflow-role",
             description="Role to allow Airflow to access resources",
             assumed_by=iam.ServicePrincipal("airflow.amazonaws.com"),
+            managed_policies=[iam.ManagedPolicy.from_managed_policy_arn(
+                self,
+                id="MWAA-managed-policy",
+                managed_policy_arn="arn:aws:iam::aws:policy/aws-service-role/AmazonMWAAServiceRolePolicy")
+            ]
         )
         self.execution_role.assume_role_policy.add_statements(
             iam.PolicyStatement(
@@ -83,10 +88,7 @@ class AirflowStack(core.Stack):
         )
 
         self.execution_role.attach_inline_policy(self.execution_policy)
-        self.execution_role.add_managed_policy(iam.ManagedPolicy.from_managed_policy_arn(
-            self,
-            id="MWAA-managed-policy",
-            managed_policy_arn="arn:aws:iam::aws:policy/aws-service-role/AmazonMWAAServiceRolePolicy"))
+
 
         with ZipFile("bootcamp_turma_6_data_platform/airflow/resources.zip", "w") as zipObj2:
             zipObj2.write(
