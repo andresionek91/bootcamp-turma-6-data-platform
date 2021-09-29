@@ -56,7 +56,7 @@ def upload_to_s3(date, coin, **context):
     string_data = json.dumps(json_data)
     now_string = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     logger.info(f"Uploading to S3")
-    S3Hook(aws_conn_id="aws_default").load_string(
+    S3Hook(aws_conn_id="aws").load_string(
         string_data=string_data,
         key=f"mercado_bitcoin/coin={coin}/execution_date={date}/mercado_bitcoin_{coin}_{now_string}.json",
         bucket_name=config["bucket"],

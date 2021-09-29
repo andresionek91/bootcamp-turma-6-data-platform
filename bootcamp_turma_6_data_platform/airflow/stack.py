@@ -118,7 +118,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group/{self.deploy_env}-airflow-log-group*"
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group/airflow-*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
