@@ -101,12 +101,6 @@ class AirflowStack(core.Stack):
                     ],
                 ),
                 iam.PolicyStatement(
-                    actions=["airflow:PublishMetrics"],
-                    resources=[
-                        f"arn:aws:airflow:{self.region}:{self.account}:environment/{self.deploy_env}-airflow"
-                    ],
-                ),
-                iam.PolicyStatement(
                     actions=["s3:GetObject*", "s3:GetBucket*", "s3:List*"],
                     resources=[
                         f"{self.bucket.bucket_arn}/*",
@@ -124,8 +118,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        self.log_group.log_group_arn,
-                        f"{self.log_group.log_group_arn}*",
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group/{self.deploy_env}-airflow-log-group*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
