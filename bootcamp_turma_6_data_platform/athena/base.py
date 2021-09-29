@@ -57,14 +57,9 @@ class BaseAthenaWorkgroup(athena.CfnWorkGroup):
         self.deploy_env = scope.deploy_env
         self.athena_bucket = athena_bucket
         self.obj_name = f"s3-belisco-{self.deploy_env}-data-lake-athena-workgroup"
-        super().__init__(
-            scope,
-            id=self.obj_name,
-            name=self.obj_name,
-            description="Workgroup padrao para execucao de queries",
-            recursive_delete_option=True,
-            state="ENABLED",
-            work_group_configuration=self.default_workgroup_configuration,
+        super().__init__(scope, id=self.obj_name,
+            name=self.obj_name,description="Workgroup padrao para execucao de queries",       recursive_delete_option=True,
+            state="ENABLED",             work_group_configuration=self.default_workgroup_configuration,
             **kwargs,
         )
 
