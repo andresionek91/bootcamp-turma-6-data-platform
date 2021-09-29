@@ -29,7 +29,8 @@ dag = DAG(
     schedule_interval="0 0 * * *",
     catchup=True,
     default_args=default_args,
-    concurrency=1
+    concurrency=5,
+    max_active_runs=2
 )
 
 
