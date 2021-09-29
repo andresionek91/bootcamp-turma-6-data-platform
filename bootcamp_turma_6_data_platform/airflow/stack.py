@@ -27,22 +27,6 @@ class AirflowStack(core.Stack):
         self.data_lake_raw_bucket = data_lake_raw_bucket
         super().__init__(scope, id=f"{self.deploy_env}-airflow-stack", **kwargs)
 
-        self.log_group = logs.LogGroup(
-            self,
-            id=f"{self.deploy_env}-airflow-log-group",
-            log_group_name=f"{self.deploy_env}-airflow-log-group",
-            retention=logs.RetentionDays.THREE_MONTHS,
-            removal_policy=core.RemovalPolicy.DESTROY,
-        )
-
-        self.logging_configuration = (
-            mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
-                cloud_watch_log_group_arn=self.log_group.log_group_arn,
-                enabled=True,
-                log_level="INFO",
-            )
-        )
-
         self.security_group = ec2.SecurityGroup(
             self,
             f"airflow-{self.deploy_env}-sg",
@@ -118,8 +102,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group/airflow-*",
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group/{self.deploy_env}-airflow-log-group"
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group/{self.deploy_env}-airflow-log-group-*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
@@ -167,11 +150,11 @@ class AirflowStack(core.Stack):
             environment_class="mw1.small",
             execution_role_arn=self.execution_role.role_arn,
             logging_configuration=mwaa.CfnEnvironment.LoggingConfigurationProperty(
-                dag_processing_logs=self.logging_configuration,
-                scheduler_logs=self.logging_configuration,
-                task_logs=self.logging_configuration,
-                webserver_logs=self.logging_configuration,
-                worker_logs=self.logging_configuration,
+                dag_processing_logs=self.get_log_config(name="dag_processing"),
+                scheduler_logs=self.get_log_config(name="scheduler"),
+                task_logs=self.get_log_config(name="task"),
+                webserver_logs=self.get_log_config(name="webserver"),
+                worker_logs=self.get_log_config(name="worker"),
             ),
             max_workers=2,
             min_workers=1,
@@ -195,4 +178,17 @@ class AirflowStack(core.Stack):
         self.airflow.node.add_dependency(self.bucket)
         self.airflow.node.add_dependency(self.dag_upload)
 
+    def get_log_config(self, name):
+        log_group = logs.LogGroup(
+            self,
+            id=f"{self.deploy_env}-airflow-log-group-{name}",
+            log_group_name=f"{self.deploy_env}-airflow-log-group-{name}",
+            retention=logs.RetentionDays.THREE_MONTHS,
+            removal_policy=core.RemovalPolicy.DESTROY,
+        )
 
+        return mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                cloud_watch_log_group_arn=log_group.log_group_arn,
+                enabled=True,
+                log_level="INFO",
+            )
