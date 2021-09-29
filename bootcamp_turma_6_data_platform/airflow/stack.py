@@ -68,6 +68,7 @@ class AirflowStack(core.Stack):
                 iam.PolicyStatement(
                     actions=[
                         "s3:PutObjectTagging",
+                        "s3:PutObjectAcl",
                         "s3:DeleteObject",
                         "s3:ListBucket",
                         "s3:GetObject",
@@ -82,6 +83,14 @@ class AirflowStack(core.Stack):
                     actions=["airflow:PublishMetrics"],
                     resources=[
                         f"arn:aws:airflow:{self.region}:{self.account}:environment/{self.deploy_env}-airflow"
+                    ],
+                ),
+                iam.PolicyStatement(
+                    effect=iam.Effect.DENY,
+                    actions=["s3:ListAllMyBuckets"],
+                    resources=[
+                        self.bucket.bucket_arn,
+                        f"{self.bucket.bucket_arn}/*"
                     ],
                 ),
                 iam.PolicyStatement(
@@ -119,6 +128,22 @@ class AirflowStack(core.Stack):
                         "sqs:SendMessage",
                     ],
                     resources=[f"arn:aws:sqs:{self.region}:*:airflow-celery-*"],
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "kms:Decrypt",
+                        "kms:DescribeKey",
+                        "kms:GenerateDataKey*",
+                        "kms:Encrypt"
+                    ],
+                    not_resources=["arn:aws:kms:*:480800208880:key/*"],
+                    conditions={
+                        "StringLike": {
+                            "kms:ViaService": [
+                                "sqs.us-east-1.amazonaws.com"
+                            ]
+                        }
+                    }
                 ),
             ],
         )
