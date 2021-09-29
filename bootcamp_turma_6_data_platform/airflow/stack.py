@@ -86,14 +86,6 @@ class AirflowStack(core.Stack):
                     ],
                 ),
                 iam.PolicyStatement(
-                    effect=iam.Effect.DENY,
-                    actions=["s3:ListAllMyBuckets"],
-                    resources=[
-                        self.bucket.bucket_arn,
-                        f"{self.bucket.bucket_arn}/*"
-                    ],
-                ),
-                iam.PolicyStatement(
                     actions=["s3:GetObject*", "s3:GetBucket*", "s3:List*"],
                     resources=[
                         f"{self.bucket.bucket_arn}/*",
@@ -111,7 +103,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group/airflow-*"
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group:airflow-*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
