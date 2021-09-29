@@ -52,11 +52,6 @@ class AirflowStack(core.Stack):
             id=f"iam-{self.deploy_env}-data-lake-raw-airflow-role",
             description="Role to allow Airflow to access resources",
             assumed_by=iam.ServicePrincipal("airflow.amazonaws.com"),
-            managed_policies=[iam.ManagedPolicy.from_managed_policy_arn(
-                self,
-                id="MWAA-managed-policy",
-                managed_policy_arn="arn:aws:iam::aws:policy/aws-service-role/AmazonMWAAServiceRolePolicy")
-            ]
         )
         self.execution_role.assume_role_policy.add_statements(
             iam.PolicyStatement(
@@ -84,11 +79,76 @@ class AirflowStack(core.Stack):
                         f"{self.data_lake_raw_bucket.bucket_arn}/*",
                     ],
                 ),
+                iam.PolicyStatement(
+                    actions=["airflow:PublishMetrics"],
+                    resources=[
+                        f"arn:aws:airflow:{self.region}:{self.account}:environment/{self.deploy_env}-airflow"
+                    ],
+                ),
+                iam.PolicyStatement(
+                    effect=iam.Effect.DENY,
+                    actions=["s3:ListAllMyBuckets"],
+                    resources=[
+                        self.bucket.bucket_arn,
+                        f"{self.bucket.bucket_arn}/*"
+                    ],
+                ),
+                iam.PolicyStatement(
+                    actions=["s3:GetObject*", "s3:GetBucket*", "s3:List*"],
+                    resources=[
+                        f"{self.bucket.bucket_arn}/*",
+                        f"{self.bucket.bucket_arn}",
+                    ],
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:PutLogEvents",
+                        "logs:GetLogEvents",
+                        "logs:GetLogRecord",
+                        "logs:GetLogGroupFields",
+                        "logs:GetQueryResults",
+                    ],
+                    resources=[
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group/airflow-*"
+                    ],
+                ),
+                iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
+                iam.PolicyStatement(
+                    actions=["cloudwatch:PutMetricData"], resources=["*"]
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "sqs:ChangeMessageVisibility",
+                        "sqs:DeleteMessage",
+                        "sqs:GetQueueAttributes",
+                        "sqs:GetQueueUrl",
+                        "sqs:ReceiveMessage",
+                        "sqs:SendMessage",
+                    ],
+                    resources=[f"arn:aws:sqs:{self.region}:*:airflow-celery-*"],
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "kms:Decrypt",
+                        "kms:DescribeKey",
+                        "kms:GenerateDataKey*",
+                        "kms:Encrypt"
+                    ],
+                    not_resources=["arn:aws:kms:*:480800208880:key/*"],
+                    conditions={
+                        "StringLike": {
+                            "kms:ViaService": [
+                                "sqs.us-east-1.amazonaws.com"
+                            ]
+                        }
+                    }
+                ),
             ],
         )
 
         self.execution_role.attach_inline_policy(self.execution_policy)
-
 
         with ZipFile("bootcamp_turma_6_data_platform/airflow/resources.zip", "w") as zipObj2:
             zipObj2.write(
