@@ -111,7 +111,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group/{self.deploy_env}-airflow-log-group-*"
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group/airflow-*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
@@ -175,11 +175,26 @@ class AirflowStack(core.Stack):
             environment_class="mw1.small",
             execution_role_arn=self.execution_role.role_arn,
             logging_configuration=mwaa.CfnEnvironment.LoggingConfigurationProperty(
-                dag_processing_logs=self.get_log_config(name="dag_processing"),
-                scheduler_logs=self.get_log_config(name="scheduler"),
-                task_logs=self.get_log_config(name="task"),
-                webserver_logs=self.get_log_config(name="webserver"),
-                worker_logs=self.get_log_config(name="worker"),
+                dag_processing_logs=mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                    enabled=True,
+                    log_level="INFO",
+                ),
+                scheduler_logs=mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                    enabled=True,
+                    log_level="INFO",
+                ),
+                task_logs=mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                    enabled=True,
+                    log_level="INFO",
+                ),
+                webserver_logs=mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                    enabled=True,
+                    log_level="INFO",
+                ),
+                worker_logs=mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
+                    enabled=True,
+                    log_level="INFO",
+                ),
             ),
             max_workers=2,
             min_workers=1,
@@ -201,18 +216,3 @@ class AirflowStack(core.Stack):
         self.airflow.node.add_dependency(self.security_group)
         self.airflow.node.add_dependency(self.bucket)
         self.airflow.node.add_dependency(self.dag_upload)
-
-    def get_log_config(self, name):
-        log_group = logs.LogGroup(
-            self,
-            id=f"{self.deploy_env}-airflow-log-group-{name}",
-            log_group_name=f"{self.deploy_env}-airflow-log-group-{name}",
-            retention=logs.RetentionDays.THREE_MONTHS,
-            removal_policy=core.RemovalPolicy.DESTROY,
-        )
-
-        return mwaa.CfnEnvironment.ModuleLoggingConfigurationProperty(
-                cloud_watch_log_group_arn=log_group.log_group_arn,
-                enabled=True,
-                log_level="INFO",
-            )
