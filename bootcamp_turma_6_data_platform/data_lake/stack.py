@@ -38,6 +38,4 @@ class DataLakeStack(core.Stack):
             self, layer=DataLakeLayer.PROCESSED
         )
 
-        self.data_lake_raw_curated = BaseDataLakeBucket(
-            self, layer=DataLakeLayer.CURATED
-        )
+        self.data_lake_raw_curated = BaseDataLakeBucket(self, layer=DataLakeLayer.CURATED)

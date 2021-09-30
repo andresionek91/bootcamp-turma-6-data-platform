@@ -1,7 +1,6 @@
 from aws_cdk import core
 from aws_cdk import (
     aws_mwaa as mwaa,
-    aws_logs as logs,
     aws_ec2 as ec2,
     aws_s3 as s3,
     aws_iam as iam,
@@ -106,9 +105,7 @@ class AirflowStack(core.Stack):
                         f"arn:aws:logs:{self.region}:{self.account}:log-group:airflow-*"
                     ],
                 ),
-                iam.PolicyStatement(
-                    actions=["logs:DescribeLogGroups"], resources=["*"]
-                ),
+                iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
                 iam.PolicyStatement(
                     actions=["cloudwatch:PutMetricData"], resources=["*"]
                 ),
@@ -132,9 +129,7 @@ class AirflowStack(core.Stack):
                     ],
                     not_resources=["arn:aws:kms:*:480800208880:key/*"],
                     conditions={
-                        "StringLike": {
-                            "kms:ViaService": ["sqs.us-east-1.amazonaws.com"]
-                        }
+                        "StringLike": {"kms:ViaService": ["sqs.us-east-1.amazonaws.com"]}
                     },
                 ),
             ],

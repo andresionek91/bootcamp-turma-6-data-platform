@@ -32,9 +32,7 @@ class GlueCatalogStack(core.Stack):
             self, data_lake_bucket=self.processed_data_lake_bucket
         )
 
-        self.role = BaseDataLakeGlueRole(
-            self, data_lake_bucket=self.raw_data_lake_bucket
-        )
+        self.role = BaseDataLakeGlueRole(self, data_lake_bucket=self.raw_data_lake_bucket)
 
         self.atomic_events_crawler = BaseGlueCrawler(
             self,
