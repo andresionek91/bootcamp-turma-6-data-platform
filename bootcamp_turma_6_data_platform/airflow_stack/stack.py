@@ -24,14 +24,14 @@ class AirflowStack(core.Stack):
         self.deploy_env = os.environ["ENVIRONMENT"]
         self.common_stack = common_stack
         self.data_lake_raw_bucket = data_lake_raw_bucket
-        super().__init__(scope, id=f"{self.deploy_env}-airflow_stack-stack", **kwargs)
+        super().__init__(scope, id=f"{self.deploy_env}-airflow-stack", **kwargs)
 
         self.security_group = ec2.SecurityGroup(
             self,
-            f"airflow_stack-{self.deploy_env}-sg",
+            f"airflow-{self.deploy_env}-sg",
             vpc=self.common_stack.custom_vpc,
             allow_all_outbound=True,
-            security_group_name=f"airflow_stack-{self.deploy_env}-sg",
+            security_group_name=f"airflow-{self.deploy_env}-sg",
         )
 
         self.security_group.add_ingress_rule(
@@ -40,29 +40,29 @@ class AirflowStack(core.Stack):
 
         self.bucket = s3.Bucket(
             self,
-            id=f"s3-{self.deploy_env}-belisquito-airflow_stack",
-            bucket_name=f"s3-{self.deploy_env}-belisquito-turma6-airflow_stack",
+            id=f"s3-{self.deploy_env}-belisquito-airflow",
+            bucket_name=f"s3-{self.deploy_env}-belisquito-turma6-airflow",
             removal_policy=core.RemovalPolicy.DESTROY,
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
         )
 
         self.execution_role = iam.Role(
             self,
-            id=f"iam-{self.deploy_env}-data-lake-raw-airflow_stack-role",
+            id=f"iam-{self.deploy_env}-data-lake-raw-airflow-role",
             description="Role to allow Airflow to access resources",
-            assumed_by=iam.ServicePrincipal("airflow_stack.amazonaws.com"),
+            assumed_by=iam.ServicePrincipal("airflow.amazonaws.com"),
         )
         self.execution_role.assume_role_policy.add_statements(
             iam.PolicyStatement(
-                principals=[iam.ServicePrincipal("airflow_stack-env.amazonaws.com")],
+                principals=[iam.ServicePrincipal("airflow-env.amazonaws.com")],
                 actions=["sts:AssumeRole"],
             )
         )
 
         self.execution_policy = iam.Policy(
             self,
-            id=f"iam-{self.deploy_env}-airflow_stack-execution-policy",
-            policy_name=f"iam-{self.deploy_env}-airflow_stack-execution-policy",
+            id=f"iam-{self.deploy_env}-airflow-execution-policy",
+            policy_name=f"iam-{self.deploy_env}-airflow-execution-policy",
             statements=[
                 iam.PolicyStatement(
                     actions=[
@@ -79,9 +79,9 @@ class AirflowStack(core.Stack):
                     ],
                 ),
                 iam.PolicyStatement(
-                    actions=["airflow_stack:PublishMetrics"],
+                    actions=["airflow:PublishMetrics"],
                     resources=[
-                        f"arn:aws:airflow_stack:{self.region}:{self.account}:environment/{self.deploy_env}-airflow_stack"
+                        f"arn:aws:airflow:{self.region}:{self.account}:environment/{self.deploy_env}-airflow"
                     ],
                 ),
                 iam.PolicyStatement(
@@ -102,7 +102,7 @@ class AirflowStack(core.Stack):
                         "logs:GetQueryResults",
                     ],
                     resources=[
-                        f"arn:aws:logs:{self.region}:{self.account}:log-group:airflow_stack-*"
+                        f"arn:aws:logs:{self.region}:{self.account}:log-group:airflow-*"
                     ],
                 ),
                 iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
@@ -118,7 +118,7 @@ class AirflowStack(core.Stack):
                         "sqs:ReceiveMessage",
                         "sqs:SendMessage",
                     ],
-                    resources=[f"arn:aws:sqs:{self.region}:*:airflow_stack-celery-*"],
+                    resources=[f"arn:aws:sqs:{self.region}:*:airflow-celery-*"],
                 ),
                 iam.PolicyStatement(
                     actions=[
@@ -138,33 +138,33 @@ class AirflowStack(core.Stack):
         self.execution_role.attach_inline_policy(self.execution_policy)
 
         with ZipFile(
-            "bootcamp_turma_6_data_platform/airflow_stack/resources.zip", "w"
+            "bootcamp_turma_6_data_platform/airflow/resources.zip", "w"
         ) as zipObj2:
             zipObj2.write(
-                "bootcamp_turma_6_data_platform/airflow_stack/requirements.txt",
+                "bootcamp_turma_6_data_platform/airflow/requirements.txt",
                 arcname="requirements.txt",
             )
-            for file in os.listdir("bootcamp_turma_6_data_platform/airflow_stack/dags"):
+            for file in os.listdir("bootcamp_turma_6_data_platform/airflow/dags"):
                 zipObj2.write(
-                    f"bootcamp_turma_6_data_platform/airflow_stack/dags/{file}",
+                    f"bootcamp_turma_6_data_platform/airflow/dags/{file}",
                     arcname=f"dags/{file}",
                 )
 
         self.dag_upload = s3deploy.BucketDeployment(
             self,
-            id=f"{self.deploy_env}-belisquito-airflow_stack-content",
+            id=f"{self.deploy_env}-belisquito-airflow-content",
             destination_bucket=self.bucket,
             sources=[
                 s3deploy.Source.asset(
-                    "bootcamp_turma_6_data_platform/airflow_stack/resources.zip"
+                    "bootcamp_turma_6_data_platform/airflow/resources.zip"
                 )
             ],
         )
 
         self.airflow = mwaa.CfnEnvironment(
             self,
-            id=f"{self.deploy_env}-airflow_stack",
-            name=f"{self.deploy_env}-airflow_stack",
+            id=f"{self.deploy_env}-airflow",
+            name=f"{self.deploy_env}-airflow",
             airflow_version="2.0.2",
             dag_s3_path="dags",
             environment_class="mw1.small",
