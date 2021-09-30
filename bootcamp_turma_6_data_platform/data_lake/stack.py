@@ -5,7 +5,10 @@ from aws_cdk import (
     aws_s3 as s3,
 )
 
-from data_lake.base import BaseDataLakeBucket, DataLakeLayer
+from bootcamp_turma_6_data_platform.data_lake.base import (
+    BaseDataLakeBucket,
+    DataLakeLayer,
+)
 
 
 class DataLakeStack(core.Stack):

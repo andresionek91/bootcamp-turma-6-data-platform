@@ -1,14 +1,14 @@
 from aws_cdk import core
 
-from airflow.stack import AirflowStack
-from athena.stack import AthenaStack
-from common_stack import CommonStack
-from data_lake.stack import DataLakeStack
-from databricks.stack import DatabricksStack
-from dms.stack import DmsStack
-from glue_catalog.stack import GlueCatalogStack
-from kinesis.stack import KinesisStack
-from redshift.stack import RedshiftStack
+from bootcamp_turma_6_data_platform.airflow_stack.stack import AirflowStack
+from bootcamp_turma_6_data_platform.athena.stack import AthenaStack
+from bootcamp_turma_6_data_platform.common_stack import CommonStack
+from bootcamp_turma_6_data_platform.data_lake.stack import DataLakeStack
+from bootcamp_turma_6_data_platform.databricks.stack import DatabricksStack
+from bootcamp_turma_6_data_platform.dms.stack import DmsStack
+from bootcamp_turma_6_data_platform.glue_catalog.stack import GlueCatalogStack
+from bootcamp_turma_6_data_platform.kinesis.stack import KinesisStack
+from bootcamp_turma_6_data_platform.redshift.stack import RedshiftStack
 
 app = core.App()
 data_lake_stack = DataLakeStack(app)

@@ -1,6 +1,6 @@
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.hooks.S3_hook import S3Hook
+from airflow_stack import DAG
+from airflow_stack.operators.python_operator import PythonOperator
+from airflow_stack.hooks.S3_hook import S3Hook
 import requests
 from backoff import on_exception, constant
 from ratelimit import limits, RateLimitException
