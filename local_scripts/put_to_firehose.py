@@ -12,6 +12,7 @@ def put_record(event):
         Record={"Data": data},
     )
     print(event)
+
     return response
 
 
