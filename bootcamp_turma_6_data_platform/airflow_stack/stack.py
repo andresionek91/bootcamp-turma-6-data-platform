@@ -7,7 +7,7 @@ from aws_cdk import (
     aws_s3_deployment as s3deploy,
 )
 
-from common_stack import CommonStack
+from bootcamp_turma_6_data_platform.common_stack import CommonStack
 from bootcamp_turma_6_data_platform.data_lake.base import BaseDataLakeBucket
 import os
 from zipfile import ZipFile
