@@ -138,15 +138,15 @@ class AirflowStack(core.Stack):
         self.execution_role.attach_inline_policy(self.execution_policy)
 
         with ZipFile(
-            "bootcamp_turma_6_data_platform/airflow/resources.zip", "w"
+            "bootcamp_turma_6_data_platform/airflow_stack/resources.zip", "w"
         ) as zipObj2:
             zipObj2.write(
-                "bootcamp_turma_6_data_platform/airflow/requirements.txt",
+                "bootcamp_turma_6_data_platform/airflow_stack/requirements.txt",
                 arcname="requirements.txt",
             )
-            for file in os.listdir("bootcamp_turma_6_data_platform/airflow/dags"):
+            for file in os.listdir("bootcamp_turma_6_data_platform/airflow_stack/dags"):
                 zipObj2.write(
-                    f"bootcamp_turma_6_data_platform/airflow/dags/{file}",
+                    f"bootcamp_turma_6_data_platform/airflow_stack/dags/{file}",
                     arcname=f"dags/{file}",
                 )
 
