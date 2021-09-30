@@ -106,7 +106,9 @@ class AirflowStack(core.Stack):
                         f"arn:aws:logs:{self.region}:{self.account}:log-group:airflow-*"
                     ],
                 ),
-                iam.PolicyStatement(actions=["logs:DescribeLogGroups"], resources=["*"]),
+                iam.PolicyStatement(
+                    actions=["logs:DescribeLogGroups"], resources=["*"]
+                ),
                 iam.PolicyStatement(
                     actions=["cloudwatch:PutMetricData"], resources=["*"]
                 ),
@@ -126,36 +128,42 @@ class AirflowStack(core.Stack):
                         "kms:Decrypt",
                         "kms:DescribeKey",
                         "kms:GenerateDataKey*",
-                        "kms:Encrypt"
+                        "kms:Encrypt",
                     ],
                     not_resources=["arn:aws:kms:*:480800208880:key/*"],
                     conditions={
                         "StringLike": {
-                            "kms:ViaService": [
-                                "sqs.us-east-1.amazonaws.com"
-                            ]
+                            "kms:ViaService": ["sqs.us-east-1.amazonaws.com"]
                         }
-                    }
+                    },
                 ),
             ],
         )
 
         self.execution_role.attach_inline_policy(self.execution_policy)
 
-        with ZipFile("bootcamp_turma_6_data_platform/airflow/resources.zip", "w") as zipObj2:
+        with ZipFile(
+            "bootcamp_turma_6_data_platform/airflow/resources.zip", "w"
+        ) as zipObj2:
             zipObj2.write(
-                "bootcamp_turma_6_data_platform/airflow/requirements.txt", arcname="requirements.txt"
+                "bootcamp_turma_6_data_platform/airflow/requirements.txt",
+                arcname="requirements.txt",
             )
             for file in os.listdir("bootcamp_turma_6_data_platform/airflow/dags"):
                 zipObj2.write(
-                    f"bootcamp_turma_6_data_platform/airflow/dags/{file}", arcname=f"dags/{file}"
+                    f"bootcamp_turma_6_data_platform/airflow/dags/{file}",
+                    arcname=f"dags/{file}",
                 )
 
         self.dag_upload = s3deploy.BucketDeployment(
             self,
             id=f"{self.deploy_env}-belisquito-airflow-content",
             destination_bucket=self.bucket,
-            sources=[s3deploy.Source.asset("bootcamp_turma_6_data_platform/airflow/resources.zip")],
+            sources=[
+                s3deploy.Source.asset(
+                    "bootcamp_turma_6_data_platform/airflow/resources.zip"
+                )
+            ],
         )
 
         self.airflow = mwaa.CfnEnvironment(
@@ -201,7 +209,7 @@ class AirflowStack(core.Stack):
             weekly_maintenance_window_start="WED:01:00",
             source_bucket_arn=self.bucket.bucket_arn,
             requirements_s3_path="requirements.txt",
-            schedulers=2
+            schedulers=2,
         )
 
         self.airflow.node.add_dependency(self.execution_role)

@@ -1,9 +1,6 @@
 from enum import Enum
 
-from aws_cdk import (
-    aws_s3 as s3,
-    core
-)
+from aws_cdk import aws_s3 as s3, core
 
 
 class DataLakeLayer(Enum):
@@ -16,7 +13,9 @@ class BaseDataLakeBucket(s3.Bucket):
     def __init__(self, scope: core.Construct, layer: DataLakeLayer, **kwargs):
         self.layer = layer
         self.deploy_env = scope.deploy_env
-        self.obj_name = f"s3-belisco-turma-6-{self.deploy_env}-data-lake-{self.layer.value}"
+        self.obj_name = (
+            f"s3-belisco-turma-6-{self.deploy_env}-data-lake-{self.layer.value}"
+        )
 
         super().__init__(
             scope=scope,
@@ -25,7 +24,7 @@ class BaseDataLakeBucket(s3.Bucket):
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             encryption=s3.BucketEncryption.S3_MANAGED,
             versioned=True,
-            **kwargs
+            **kwargs,
         )
 
         self.set_default_lifecycle_rules()

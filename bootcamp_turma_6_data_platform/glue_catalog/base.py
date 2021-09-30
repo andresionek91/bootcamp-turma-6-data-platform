@@ -177,14 +177,16 @@ class OrdersTable(glue.Table):
                     type=glue.Type(input_string="timestamp", is_primitive=True),
                 ),
                 glue.Column(
-                    name="order_id", type=glue.Type(input_string="string", is_primitive=True)
+                    name="order_id",
+                    type=glue.Type(input_string="string", is_primitive=True),
                 ),
                 glue.Column(
                     name="product_name",
                     type=glue.Type(input_string="string", is_primitive=True),
                 ),
                 glue.Column(
-                    name="value", type=glue.Type(input_string="double", is_primitive=True)
+                    name="value",
+                    type=glue.Type(input_string="double", is_primitive=True),
                 ),
             ],
             **kwargs,

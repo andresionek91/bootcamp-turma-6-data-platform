@@ -23,7 +23,7 @@ class DatabricksStack(core.Stack):
     """
 
     def __init__(self, scope: core.Construct, **kwargs) -> None:
-        self.deploy_env = os.environ['ENVIRONMENT']
+        self.deploy_env = os.environ["ENVIRONMENT"]
         super().__init__(scope, id=f"{self.deploy_env}-databricks-stack", **kwargs)
 
         access_role = iam.Role(
@@ -89,7 +89,11 @@ class DatabricksStack(core.Stack):
             roles=[access_role.role_name],
         )
 
-        cross_account_role = iam.Role.from_role_arn(scope=self, id="databricks-cross-account", role_arn="arn:aws:iam::480800208880:role/db-a205e963818fcee8fb1136385513e11a-iam-role")
+        cross_account_role = iam.Role.from_role_arn(
+            scope=self,
+            id="databricks-cross-account",
+            role_arn="arn:aws:iam::480800208880:role/db-a205e963818fcee8fb1136385513e11a-iam-role",
+        )
 
         cross_account_policy_data_access = iam.Policy(
             self,

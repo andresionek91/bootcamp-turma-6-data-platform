@@ -21,10 +21,8 @@ class GlueCatalogStack(core.Stack):
     ) -> None:
         self.raw_data_lake_bucket = raw_data_lake_bucket
         self.processed_data_lake_bucket = processed_data_lake_bucket
-        self.deploy_env = os.environ['ENVIRONMENT']
-        super().__init__(
-            scope, id=f"{self.deploy_env}-glue-catalog-stack", **kwargs
-        )
+        self.deploy_env = os.environ["ENVIRONMENT"]
+        super().__init__(scope, id=f"{self.deploy_env}-glue-catalog-stack", **kwargs)
 
         self.raw_database = BaseDataLakeGlueDatabase(
             self, data_lake_bucket=self.raw_data_lake_bucket
@@ -34,7 +32,9 @@ class GlueCatalogStack(core.Stack):
             self, data_lake_bucket=self.processed_data_lake_bucket
         )
 
-        self.role = BaseDataLakeGlueRole(self, data_lake_bucket=self.raw_data_lake_bucket)
+        self.role = BaseDataLakeGlueRole(
+            self, data_lake_bucket=self.raw_data_lake_bucket
+        )
 
         self.atomic_events_crawler = BaseGlueCrawler(
             self,

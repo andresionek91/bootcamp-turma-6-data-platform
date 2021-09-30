@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "bootcamp-turma-6-data-platform"
+version = "0.1.0"
+description = "Data Platform turma 6"
+authors = ["Andre <andresionek91@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fake-web-events = "^0.2.5"
+requests = "^2.26.0"
+boto3 = "^1.18.52"
+psycopg2-binary = "^2.9.1"
+backoff = "^1.11.1"
+ratelimit = "^2.2.1"
+setuptools = "^58.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.9b0"
+flake8 = "^3.9.2"
+pre-commit = "^2.15.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

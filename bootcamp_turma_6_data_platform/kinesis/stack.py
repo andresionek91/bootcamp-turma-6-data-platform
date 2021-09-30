@@ -69,7 +69,6 @@ class KinesisStack(core.Stack):
             delivery_stream_name=f"firehose-{self.deploy_env}-raw-delivery-stream",
             delivery_stream_type="DirectPut",
             extended_s3_destination_configuration=self.s3_config,
-
         )
 
     @property

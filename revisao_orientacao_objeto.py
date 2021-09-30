@@ -22,9 +22,11 @@ class Pessoa(ABC):
     def __str__(self):
         return f"{self.nome} {self.sobrenome} tem {self.idade} anos"
 
+
 class Brasileiro(Pessoa):
     def falar(self):
         return "Olá mundo"
+
 
 andre = Brasileiro(nome="Andre", sobrenome="Sionek", data_de_nascimento="1991-01-09")
 print(andre.data_de_nascimento)
@@ -43,10 +45,11 @@ class Cachorro:
     def is_cachorro(self):
         return False
 
+
 andre = Pessoa(nome="Andre", sobrenome="Sionek", idade=30)
 print(andre)
 
-belisco = Cachorro(nome='Belisco', raca='Lhasa', idade=1.9)
+belisco = Cachorro(nome="Belisco", raca="Lhasa", idade=1.9)
 print(belisco)
 print(belisco.is_cachorro())
 
@@ -58,19 +61,23 @@ class EngenheiroDeDados(Pessoa):
         self.print_var = super().__str__()
 
     def __str__(self):
-        return f"{self.nome} {self.sobrenome} tem {self.idade} anos, " \
-               f"é Engenheiro de Dados e tem {self.experiencia} anos de experiencia"
+        return (
+            f"{self.nome} {self.sobrenome} tem {self.idade} anos, "
+            f"é Engenheiro de Dados e tem {self.experiencia} anos de experiencia"
+        )
 
-andre = EngenheiroDeDados(nome='Andre', sobrenome='Sionek', idade=30, experiencia=4)
+
+andre = EngenheiroDeDados(nome="Andre", sobrenome="Sionek", idade=30, experiencia=4)
 print(andre)
 print(andre.print_var)
+
 
 class CatiorinhoFiaDaPuta(Cachorro):
     def is_fiadaputa(self):
         return True
 
 
-belisco = CatiorinhoFiaDaPuta(nome='Belisco', raca='Lhasa', idade=1.5)
+belisco = CatiorinhoFiaDaPuta(nome="Belisco", raca="Lhasa", idade=1.5)
 print(belisco)
 print(belisco.is_fiadaputa())
 print(belisco.is_cachorro())

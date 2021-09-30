@@ -27,6 +27,10 @@ glue_catalog_stack = GlueCatalogStack(
     processed_data_lake_bucket=data_lake_stack.data_lake_raw_processed,
 )
 databricks_stack = DatabricksStack(app)
-airflow_stack = AirflowStack(app, common_stack=common_stack, data_lake_raw_bucket=data_lake_stack.data_lake_raw_bucket)
+airflow_stack = AirflowStack(
+    app,
+    common_stack=common_stack,
+    data_lake_raw_bucket=data_lake_stack.data_lake_raw_bucket,
+)
 
 app.synth()

@@ -25,7 +25,8 @@ class CommonStack(core.Stack):
 
         for subnet in self.custom_vpc.private_subnets:
             self.orders_rds_sg.add_ingress_rule(
-                peer=ec2.Peer.ipv4(subnet.ipv4_cidr_block), connection=ec2.Port.tcp(5432)
+                peer=ec2.Peer.ipv4(subnet.ipv4_cidr_block),
+                connection=ec2.Port.tcp(5432),
             )
 
         self.orders_rds_parameter_group = rds.ParameterGroup(

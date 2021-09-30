@@ -10,12 +10,10 @@ import json
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
 config = {
     "bucket": "s3-belisco-turma-6-production-data-lake-raw",
     "coins": ["BCH", "BTC", "ETH", "LTC"],
 }
-
 default_args = {
     "owner": "andresionek91",
     "start_date": datetime(2021, 1, 1),
@@ -30,13 +28,13 @@ dag = DAG(
     catchup=True,
     default_args=default_args,
     concurrency=5,
-    max_active_runs=2
+    max_active_runs=2,
 )
 
 
 @on_exception(constant, RateLimitException, interval=30, max_tries=1)
 @limits(calls=29, period=30)
-@on_exception(constant, requests.exceptions.HTTPError, interval=0.5, max_tries=60)
+@on_exception(constant, requests.exceptions.HTTPError, interval=0.5, max_tries=3)
 def get_daily_summary(date: str, coin: str):
     year, month, day = date.split("-")
     endpoint = (
@@ -66,6 +64,7 @@ def upload_to_s3(date, coin, **context):
 
 
 for coin in config["coins"]:
+
     logger.info(f"Starting extractions tasks for {coin}")
     task_1 = PythonOperator(
         task_id=f"get_daily_summary_{coin}",

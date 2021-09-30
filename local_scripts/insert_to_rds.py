@@ -6,9 +6,9 @@ import uuid
 
 from faker import Faker
 
-faker_instance = Faker(['en_US'])
+faker_instance = Faker(["en_US"])
 lat, lng, region, country, timezone = faker_instance.location_on_land()
-print(lat, lng, region, country, timezone )
+print(lat, lng, region, country, timezone)
 
 
 dsn = (
