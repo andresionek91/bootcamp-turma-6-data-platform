@@ -156,7 +156,7 @@ class AirflowStack(core.Stack):
             destination_bucket=self.bucket,
             sources=[
                 s3deploy.Source.asset(
-                    "bootcamp_turma_6_data_platform/airflow/resources.zip"
+                    "bootcamp_turma_6_data_platform/airflow_stack/resources.zip"
                 )
             ],
         )
