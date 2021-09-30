@@ -8,6 +8,7 @@ from databricks.stack import DatabricksStack
 from dms.stack import DmsStack
 from glue_catalog.stack import GlueCatalogStack
 from kinesis.stack import KinesisStack
+from redshift.stack import RedshiftStack
 
 app = core.App()
 data_lake_stack = DataLakeStack(app)
@@ -31,6 +32,12 @@ airflow_stack = AirflowStack(
     app,
     common_stack=common_stack,
     data_lake_raw_bucket=data_lake_stack.data_lake_raw_bucket,
+)
+redshift_stack = RedshiftStack(
+    app,
+    common_stack=common_stack,
+    data_lake_raw=data_lake_stack.data_lake_raw_bucket,
+    data_lake_processed=data_lake_stack.data_lake_raw_processed,
 )
 
 app.synth()
